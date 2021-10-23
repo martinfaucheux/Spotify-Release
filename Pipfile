@@ -8,6 +8,8 @@ django = "*"
 markdown = "*"
 djangorestframework = "*"
 psycopg2 = "*"
+requests = "*"
+python-decouple = "*"
 
 [dev-packages]
 black = "*"
