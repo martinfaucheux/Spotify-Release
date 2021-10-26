@@ -1,8 +1,10 @@
 import base64
 import json
+from datetime import timedelta
 
 import requests
 from config import settings
+from django.utils import timezone
 
 SPOTIFY_URL_AUTH = "https://accounts.spotify.com/authorize/"
 SPOTIFY_URL_TOKEN = "https://accounts.spotify.com/api/token/"
@@ -18,10 +20,16 @@ class SpotifyAuth(object):
     CLIENT_SECRET = settings.SPOTIFY_CLIENT_SECRET
 
     def refresh_auth(self, refresh_token):
-        body = {"grant_type": "refresh_token", "refresh_token": refresh_token}
+        body = {
+            "grant_type": "refresh_token",
+            "refresh_token": refresh_token,
+            "client_id": self.CLIENT_ID,
+            "client_secret": self.CLIENT_SECRET,
+        }
+        headers = {"Content-Type": HEADER}
 
-        post_refresh = requests.post(SPOTIFY_URL_TOKEN, data=body, headers=HEADER)
-        p_back = json.dumps(post_refresh.text)
+        post_refresh = requests.post(SPOTIFY_URL_TOKEN, data=body, headers=headers)
+        p_back = json.loads(post_refresh.text)
 
         return self._handle_token(p_back)
 
@@ -36,6 +44,16 @@ class SpotifyAuth(object):
         return self._get_token(
             code, self.CLIENT_ID, self.CLIENT_SECRET, f"{CALLBACK_URL}/callback"
         )
+
+    def get_save_kwargs(self, token_data):
+        kwargs = {
+            k: v
+            for k, v in token_data.items()
+            if k in ["access_token", "refresh_token"]
+        }
+        expires_in = token_data["expires_in"]
+        kwargs["expire_at"] = timezone.now() + timedelta(seconds=expires_in)
+        return kwargs
 
     def _get_auth(self, client_id, redirect_uri, scope):
         return (
@@ -67,7 +85,9 @@ class SpotifyAuth(object):
     def _handle_token(self, response):
         if "error" in response:
             return None
+
         return {
-            key: response[key]
-            for key in ["access_token", "expires_in", "refresh_token"]
+            key: value
+            for key, value in response.items()
+            if key in ["access_token", "expires_in", "refresh_token"]
         }
