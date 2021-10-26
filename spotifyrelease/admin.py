@@ -1,11 +1,13 @@
 from django.contrib import admin
 
-from .models import SpotifyToken
+from .models import Album, Artist, SpotifyToken, Track
 
 
-class SpotifyTokenAdmin(admin.ModelAdmin):
+class DefaultModelAdmin(admin.ModelAdmin):
     pass
 
 
-
-admin.site.register(SpotifyToken, SpotifyTokenAdmin)
+admin.site.register(Artist, DefaultModelAdmin)
+admin.site.register(Track, DefaultModelAdmin)
+admin.site.register(Album, DefaultModelAdmin)
+admin.site.register(SpotifyToken, DefaultModelAdmin)
