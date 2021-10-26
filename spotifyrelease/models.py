@@ -6,4 +6,4 @@ class SpotifyToken(TimeStampMixin):
 
     access_token = models.CharField(blank=True, max_length=255)
     refresh_token = models.CharField(blank=True, max_length=255)
-    expire_at = models.DateField()
+    expire_at = models.DateTimeField()

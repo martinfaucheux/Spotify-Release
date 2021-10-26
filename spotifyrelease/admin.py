@@ -1,3 +1,11 @@
 from django.contrib import admin
 
-# Register your models here.
+from .models import SpotifyToken
+
+
+class SpotifyTokenAdmin(admin.ModelAdmin):
+    pass
+
+
+
+admin.site.register(SpotifyToken, SpotifyTokenAdmin)
