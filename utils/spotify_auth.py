@@ -66,7 +66,7 @@ class SpotifyAuth(object):
 
     def _handle_token(self, response):
         if "error" in response:
-            return response
+            return None
         return {
             key: response[key]
             for key in ["access_token", "expires_in", "refresh_token"]

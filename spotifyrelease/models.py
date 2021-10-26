@@ -1,9 +1,9 @@
-from django.contrib.auth.models import AbstractUser
 from django.db import models
+from utils.model_mixins import TimeStampMixin
 
-# Create your models here.
 
+class SpotifyToken(TimeStampMixin):
 
-# class User(AbstractUser):
-#     spotify_token = models.CharField(blank=True)
-#     spotify_refresh_token = models.CharField(blank=True)
+    access_token = models.CharField(blank=True, max_length=255)
+    refresh_token = models.CharField(blank=True, max_length=255)
+    expire_at = models.DateField()
