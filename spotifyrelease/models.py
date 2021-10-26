@@ -20,7 +20,8 @@ class Album(TimeStampMixin):
     album_type = models.CharField(
         choices=AlbumType.CHOICES, default=AlbumType.ALBUM, max_length=255
     )
-    artists = models.ManyToManyField(Artist)
+
+    artists = models.ManyToManyField(Artist, related_name="albums")
 
     def __str__(self):
         return self.name
