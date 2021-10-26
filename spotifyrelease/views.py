@@ -2,6 +2,7 @@ from django.http import HttpResponseRedirect
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.filters import OrderingFilter, SearchFilter
+from rest_framework.generics import get_object_or_404
 from rest_framework.response import Response
 from rest_framework.viewsets import ReadOnlyModelViewSet
 from utils.pagination import CustomPagination
@@ -69,3 +70,17 @@ class AlbumViewSet(ReadOnlyModelViewSet):
     search_fields = ["name"]
     ordering_fields = ["name", "created_at"]
     ordering = ["name"]
+
+
+class ArtistOfAlbumViewSet(ArtistViewSet):
+    def get_queryset(self):
+        album_id = self.kwargs.get("album_pk")
+        album = get_object_or_404(Album.objects.all(), pk=album_id)
+        return album.artists.order_by("name")
+
+
+class AlbumOfArtistViewSet(AlbumViewSet):
+    def get_queryset(self):
+        artist_id = self.kwargs.get("artist_pk")
+        artist = get_object_or_404(Artist.objects.all(), pk=artist_id)
+        return artist.albums.order_by("name")

@@ -15,9 +15,11 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import include, path
-from rest_framework import routers
+from rest_framework_nested import routers
 from spotifyrelease.views import (
+    AlbumOfArtistViewSet,
     AlbumViewSet,
+    ArtistOfAlbumViewSet,
     ArtistViewSet,
     display_new_releases,
     spotify_auth_callback_view,
@@ -25,9 +27,15 @@ from spotifyrelease.views import (
 )
 
 # Create a router and register our viewsets with it.
-router = routers.DefaultRouter()
-router.register(r"artists", ArtistViewSet)
-router.register(r"albums", AlbumViewSet)
+router = routers.SimpleRouter()
+router.register("artists", ArtistViewSet)
+router.register("albums", AlbumViewSet)
+
+artist_router = routers.NestedSimpleRouter(router, "artists", lookup="artist")
+artist_router.register("albums", AlbumOfArtistViewSet, basename="albums-of-artist")
+
+album_router = routers.NestedSimpleRouter(router, "albums", lookup="album")
+album_router.register("artists", ArtistOfAlbumViewSet, basename="artists-of-albums")
 
 
 urlpatterns = [
@@ -37,4 +45,5 @@ urlpatterns = [
     path("auth/spotify-login/", spotify_login_view),
     path("new-releases", display_new_releases),
     path("api/", include(router.urls)),
+    path("api/", include(album_router.urls)),
 ]
