@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     # custom
     "rest_framework",
     "django_extensions",
+    "django_filters",
     # my apps
     "spotifyrelease",
 ]
@@ -137,6 +138,10 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 # enable using ipython with `manage.py shell_plus`
 SHELL_PLUS = "ipython"
+
+REST_FRAMEWORK = {
+    "DEFAULT_FILTER_BACKENDS": ["django_filters.rest_framework.DjangoFilterBackend"]
+}
 
 # CELERY related settings
 BROKER_URL = config("BROKER_URL")

@@ -12,4 +12,4 @@ class ArtistSerializer(serializers.ModelSerializer):
 class AlbumSerializer(serializers.ModelSerializer):
     class Meta:
         model = Album
-        fields = "__all__"
+        exclude = ("artists",)

@@ -1,6 +1,7 @@
 from django.http import HttpResponseRedirect
 from rest_framework import status
 from rest_framework.decorators import api_view
+from rest_framework.filters import OrderingFilter, SearchFilter
 from rest_framework.response import Response
 from rest_framework.viewsets import ReadOnlyModelViewSet
 from utils.pagination import CustomPagination
@@ -53,8 +54,18 @@ class ArtistViewSet(ReadOnlyModelViewSet):
     pagination_class = CustomPagination
     queryset = Artist.objects.all()
 
+    filter_backends = [SearchFilter, OrderingFilter]
+    search_fields = ["name"]
+    ordering_fields = ["name", "created_at"]
+    ordering = ["name"]
+
 
 class AlbumViewSet(ReadOnlyModelViewSet):
     serializer_class = AlbumSerializer
     pagination_class = CustomPagination
+    filter_backends = [SearchFilter]
     queryset = Album.objects.all()
+
+    search_fields = ["name"]
+    ordering_fields = ["name", "created_at"]
+    ordering = ["name"]
