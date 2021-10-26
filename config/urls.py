@@ -17,6 +17,7 @@ from django.contrib import admin
 from django.urls import include, path
 from rest_framework import routers
 from spotifyrelease.views import (
+    AlbumViewSet,
     ArtistViewSet,
     display_new_releases,
     spotify_auth_callback_view,
@@ -26,6 +27,7 @@ from spotifyrelease.views import (
 # Create a router and register our viewsets with it.
 router = routers.DefaultRouter()
 router.register(r"artists", ArtistViewSet)
+router.register(r"albums", AlbumViewSet)
 
 
 urlpatterns = [

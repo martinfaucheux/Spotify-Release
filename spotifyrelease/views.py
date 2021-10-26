@@ -7,8 +7,8 @@ from utils.pagination import CustomPagination
 from utils.spotify_auth import SpotifyAuth
 from utils.spotify_browser import fetch_new_release_data
 
-from spotifyrelease.models import Artist, SpotifyToken
-from spotifyrelease.serializers import ArtistSerializer
+from spotifyrelease.models import Album, Artist, SpotifyToken
+from spotifyrelease.serializers import AlbumSerializer, ArtistSerializer
 
 
 # Create your views here.
@@ -52,3 +52,9 @@ class ArtistViewSet(ReadOnlyModelViewSet):
     serializer_class = ArtistSerializer
     pagination_class = CustomPagination
     queryset = Artist.objects.all()
+
+
+class AlbumViewSet(ReadOnlyModelViewSet):
+    serializer_class = AlbumSerializer
+    pagination_class = CustomPagination
+    queryset = Album.objects.all()
