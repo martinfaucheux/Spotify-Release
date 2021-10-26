@@ -1,6 +1,5 @@
 import base64
 import json
-import os
 
 import requests
 from config import settings
@@ -18,7 +17,27 @@ class SpotifyAuth(object):
     CLIENT_ID = settings.SPOTIFY_CLIENT_ID
     CLIENT_SECRET = settings.SPOTIFY_CLIENT_SECRET
 
-    def getAuth(self, client_id, redirect_uri, scope):
+    def refresh_auth(self, refresh_token):
+        body = {"grant_type": "refresh_token", "refresh_token": refresh_token}
+
+        post_refresh = requests.post(SPOTIFY_URL_TOKEN, data=body, headers=HEADER)
+        p_back = json.dumps(post_refresh.text)
+
+        return self._handle_token(p_back)
+
+    def get_user(self):
+        return self._get_auth(
+            self.CLIENT_ID,
+            f"{CALLBACK_URL}/callback",
+            SCOPE,
+        )
+
+    def get_user_token(self, code):
+        return self._get_token(
+            code, self.CLIENT_ID, self.CLIENT_SECRET, f"{CALLBACK_URL}/callback"
+        )
+
+    def _get_auth(self, client_id, redirect_uri, scope):
         return (
             f"{SPOTIFY_URL_AUTH}"
             f"?client_id={client_id}"
@@ -27,7 +46,7 @@ class SpotifyAuth(object):
             "&response_type=code"
         )
 
-    def getToken(self, code, client_id, client_secret, redirect_uri):
+    def _get_token(self, code, client_id, client_secret, redirect_uri):
         body = {
             "grant_type": "authorization_code",
             "code": code,
@@ -43,32 +62,12 @@ class SpotifyAuth(object):
         }
 
         post = requests.post(SPOTIFY_URL_TOKEN, params=body, headers=headers)
-        return self.handleToken(json.loads(post.text))
+        return self._handle_token(json.loads(post.text))
 
-    def handleToken(self, response):
+    def _handle_token(self, response):
         if "error" in response:
             return response
         return {
             key: response[key]
             for key in ["access_token", "expires_in", "refresh_token"]
         }
-
-    def refreshAuth(self, refresh_token):
-        body = {"grant_type": "refresh_token", "refresh_token": refresh_token}
-
-        post_refresh = requests.post(SPOTIFY_URL_TOKEN, data=body, headers=HEADER)
-        p_back = json.dumps(post_refresh.text)
-
-        return self.handleToken(p_back)
-
-    def getUser(self):
-        return self.getAuth(
-            self.CLIENT_ID,
-            f"{CALLBACK_URL}/callback",
-            self.SCOPE,
-        )
-
-    def getUserToken(self, code):
-        return self.getToken(
-            code, self.CLIENT_ID, self.CLIENT_SECRET, f"{CALLBACK_URL}/callback"
-        )

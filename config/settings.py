@@ -41,7 +41,9 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     # custom
     "rest_framework",
-    "newrelease",
+    "django_extensions",
+    # my apps
+    "spotifyrelease",
 ]
 
 MIDDLEWARE = [
@@ -84,8 +86,8 @@ DATABASES = {
         "NAME": config("DATABASE_NAME"),
         "USER": config("DATABASE_USER"),
         "PASSWORD": config("DATABASE_PASSWORD"),
-        "HOST": "127.0.0.1",
-        "PORT": "5432",
+        "HOST": config("DATABASE_HOST"),
+        "PORT": config("DATABASE_PORT"),
     }
 }
 
@@ -133,4 +135,9 @@ STATIC_URL = "/static/"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
+# enable using ipython with `manage.py shell_plus`
+SHELL_PLUS = "ipython"
+
 # LOAD SPOTIFY RELATED VARIABLES
+SPOTIFY_CLIENT_ID = config("SPOTIFY_CLIENT_ID")
+SPOTIFY_CLIENT_SECRET = config("SPOTIFY_CLIENT_SECRET")
