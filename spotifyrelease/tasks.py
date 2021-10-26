@@ -28,6 +28,7 @@ def pull_new_release():
             defaults={
                 "name": album_data["name"],
                 "album_type": album_data["album_type"],
+                "release_date": album_data["release_date"],
             },
         )
 

@@ -11,7 +11,7 @@ class Artist(TimeStampMixin):
     name = models.CharField(max_length=255)
 
     def __str__(self):
-        return self.name
+        return self.name if self.name else f"Artist {self.id}"
 
 
 class Album(TimeStampMixin):
@@ -20,11 +20,12 @@ class Album(TimeStampMixin):
     album_type = models.CharField(
         choices=AlbumType.CHOICES, default=AlbumType.ALBUM, max_length=255
     )
+    release_date = models.DateTimeField(blank=True, null=True)
 
     artists = models.ManyToManyField(Artist, related_name="albums")
 
     def __str__(self):
-        return self.name
+        return self.name if self.name else f"Album {self.id}"
 
 
 class SpotifyToken(TimeStampMixin):
