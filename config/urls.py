@@ -45,5 +45,6 @@ urlpatterns = [
     path("auth/spotify-login/", spotify_login_view),
     path("new-releases", display_new_releases),
     path("api/", include(router.urls)),
+    path("api/", include(artist_router.urls)),
     path("api/", include(album_router.urls)),
 ]
