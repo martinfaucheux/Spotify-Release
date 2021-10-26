@@ -2,10 +2,13 @@ from django.http import HttpResponseRedirect
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
+from rest_framework.viewsets import ReadOnlyModelViewSet
+from utils.pagination import CustomPagination
 from utils.spotify_auth import SpotifyAuth
 from utils.spotify_browser import fetch_new_release_data
 
-from spotifyrelease.models import SpotifyToken
+from spotifyrelease.models import Artist, SpotifyToken
+from spotifyrelease.serializers import ArtistSerializer
 
 
 # Create your views here.
@@ -43,3 +46,9 @@ def display_new_releases(request):
         status=status.HTTP_202_ACCEPTED,
         data=fetch_new_release_data(spotify_token.access_token),
     )
+
+
+class ArtistViewSet(ReadOnlyModelViewSet):
+    serializer_class = ArtistSerializer
+    pagination_class = CustomPagination
+    queryset = Artist.objects.all()

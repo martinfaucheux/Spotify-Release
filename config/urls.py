@@ -15,16 +15,17 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import include, path
+from rest_framework import routers
 from spotifyrelease.views import (
+    ArtistViewSet,
     display_new_releases,
     spotify_auth_callback_view,
     spotify_login_view,
 )
 
 # Create a router and register our viewsets with it.
-# router = DefaultRouter()
-# router.register(r'snippets', views.SnippetViewSet)
-# router.register(r'users', views.UserViewSet)
+router = routers.DefaultRouter()
+router.register(r"artists", ArtistViewSet)
 
 
 urlpatterns = [
@@ -32,6 +33,6 @@ urlpatterns = [
     path("api-auth/", include("rest_framework.urls")),
     path("auth/callback/", spotify_auth_callback_view),
     path("auth/spotify-login/", spotify_login_view),
-    path("new-releases", display_new_releases)
-    # path('', include(router.urls)),
+    path("new-releases", display_new_releases),
+    path("api/", include(router.urls)),
 ]
