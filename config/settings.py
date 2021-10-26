@@ -138,6 +138,16 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 # enable using ipython with `manage.py shell_plus`
 SHELL_PLUS = "ipython"
 
+# CELERY related settings
+BROKER_URL = config("REDIS_URL")
+CELERY_BROKER_URL = BROKER_URL
+CELERY_RESULT_BACKEND = config("REDIS_URL")
+CELERY_ACCEPT_CONTENT = ["application/json"]
+CELERY_TASK_SERIALIZER = "json"
+CELERY_RESULT_SERIALIZER = "json"
+CELERY_TIMEZONE = "Asia/Calcutta"
+
+
 # LOAD SPOTIFY RELATED VARIABLES
 SPOTIFY_CLIENT_ID = config("SPOTIFY_CLIENT_ID")
 SPOTIFY_CLIENT_SECRET = config("SPOTIFY_CLIENT_SECRET")
