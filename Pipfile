@@ -18,6 +18,8 @@ django-filter = "*"
 drf-nested-routers = "*"
 django-heroku = "*"
 gunicorn = "*"
+django-celery-beat = "~=2.0.0"
+cd = "*"
 
 [dev-packages]
 black = "*"

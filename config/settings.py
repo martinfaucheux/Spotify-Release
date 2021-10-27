@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     "rest_framework",
     "django_extensions",
     "django_filters",
+    "django_celery_beat",
     # my apps
     "spotifyrelease",
 ]
