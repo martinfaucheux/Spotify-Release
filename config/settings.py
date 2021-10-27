@@ -85,11 +85,11 @@ WSGI_APPLICATION = "config.wsgi.application"
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql_psycopg2",
-        "NAME": config("DATABASE_NAME"),
-        "USER": config("DATABASE_USER"),
-        "PASSWORD": config("DATABASE_PASSWORD"),
-        "HOST": config("DATABASE_HOST"),
-        "PORT": config("DATABASE_PORT"),
+        "NAME": config("DATABASE_NAME", default="spotifyrelease"),
+        "USER": config("DATABASE_USER", default="postgres"),
+        "PASSWORD": config("DATABASE_PASSWORD", default="postgres"),
+        "HOST": config("DATABASE_HOST", default="localhost"),
+        "PORT": config("DATABASE_PORT", cast=int, default=5432),
     }
 }
 
@@ -157,6 +157,9 @@ CELERY_TIMEZONE = "Asia/Calcutta"
 # LOAD SPOTIFY RELATED VARIABLES
 SPOTIFY_CLIENT_ID = config("SPOTIFY_CLIENT_ID", default="")
 SPOTIFY_CLIENT_SECRET = config("SPOTIFY_CLIENT_SECRET", default="")
+SPOTIFY_CALLBACK_URL = config(
+    "SPOTIFY_CLIENT_SECRET", default="http://localhost:5000/auth"
+)
 
 # Activate Django-Heroku.
 django_heroku.settings(locals(), db_colors=True)

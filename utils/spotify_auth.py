@@ -10,7 +10,6 @@ SPOTIFY_URL_AUTH = "https://accounts.spotify.com/authorize/"
 SPOTIFY_URL_TOKEN = "https://accounts.spotify.com/api/token/"
 RESPONSE_TYPE = "code"
 HEADER = "application/x-www-form-urlencoded"
-CALLBACK_URL = "http://localhost:5000/auth"
 SCOPE = "user-read-email user-read-private"
 
 
@@ -18,6 +17,7 @@ class SpotifyAuth(object):
 
     CLIENT_ID = settings.SPOTIFY_CLIENT_ID
     CLIENT_SECRET = settings.SPOTIFY_CLIENT_SECRET
+    CALLBACK_URL = settings.SPOTIFY_CALLBACK_URL
 
     def refresh_auth(self, refresh_token):
         body = {
@@ -36,13 +36,13 @@ class SpotifyAuth(object):
     def get_user(self):
         return self._get_auth(
             self.CLIENT_ID,
-            f"{CALLBACK_URL}/callback",
+            f"{self.CALLBACK_URL}/callback",
             SCOPE,
         )
 
     def get_user_token(self, code):
         return self._get_token(
-            code, self.CLIENT_ID, self.CLIENT_SECRET, f"{CALLBACK_URL}/callback"
+            code, self.CLIENT_ID, self.CLIENT_SECRET, f"{self.CALLBACK_URL}/callback"
         )
 
     def get_save_kwargs(self, token_data):
