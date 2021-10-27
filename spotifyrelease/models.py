@@ -1,3 +1,4 @@
+from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.utils import timezone
 from utils.model_mixins import TimeStampMixin
@@ -26,6 +27,10 @@ class Album(TimeStampMixin):
 
     def __str__(self):
         return self.name if self.name else f"Album {self.id}"
+
+
+class User(AbstractUser):
+    pass
 
 
 class SpotifyToken(TimeStampMixin):
