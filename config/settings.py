@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 
 from pathlib import Path
 
+import django_heroku
 from decouple import config
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -156,3 +157,6 @@ CELERY_TIMEZONE = "Asia/Calcutta"
 # LOAD SPOTIFY RELATED VARIABLES
 SPOTIFY_CLIENT_ID = config("SPOTIFY_CLIENT_ID")
 SPOTIFY_CLIENT_SECRET = config("SPOTIFY_CLIENT_SECRET")
+
+# Activate Django-Heroku.
+django_heroku.settings(locals())
