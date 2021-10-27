@@ -36,7 +36,7 @@ class SpotifyAuth(object):
     def get_user(self):
         return self._get_auth(
             self.CLIENT_ID,
-            {self.CALLBACK_URL},
+            self.CALLBACK_URL,
             SCOPE,
         )
 
