@@ -145,7 +145,7 @@ REST_FRAMEWORK = {
 }
 
 # CELERY related settings
-BROKER_URL = config("BROKER_URL")
+BROKER_URL = config("BROKER_URL", default="")
 CELERY_BROKER_URL = BROKER_URL
 CELERY_RESULT_BACKEND = BROKER_URL
 CELERY_ACCEPT_CONTENT = ["application/json"]
@@ -155,8 +155,8 @@ CELERY_TIMEZONE = "Asia/Calcutta"
 
 
 # LOAD SPOTIFY RELATED VARIABLES
-SPOTIFY_CLIENT_ID = config("SPOTIFY_CLIENT_ID")
-SPOTIFY_CLIENT_SECRET = config("SPOTIFY_CLIENT_SECRET")
+SPOTIFY_CLIENT_ID = config("SPOTIFY_CLIENT_ID", default="")
+SPOTIFY_CLIENT_SECRET = config("SPOTIFY_CLIENT_SECRET", default="")
 
 # Activate Django-Heroku.
 django_heroku.settings(locals(), db_colors=True)
