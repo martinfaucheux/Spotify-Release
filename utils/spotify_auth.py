@@ -36,13 +36,13 @@ class SpotifyAuth(object):
     def get_user(self):
         return self._get_auth(
             self.CLIENT_ID,
-            f"{self.CALLBACK_URL}/callback",
+            {self.CALLBACK_URL},
             SCOPE,
         )
 
     def get_user_token(self, code):
         return self._get_token(
-            code, self.CLIENT_ID, self.CLIENT_SECRET, f"{self.CALLBACK_URL}/callback"
+            code, self.CLIENT_ID, self.CLIENT_SECRET, self.CALLBACK_URL
         )
 
     def get_save_kwargs(self, token_data):

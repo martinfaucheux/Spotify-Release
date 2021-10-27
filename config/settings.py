@@ -158,7 +158,7 @@ CELERY_TIMEZONE = "Asia/Calcutta"
 SPOTIFY_CLIENT_ID = config("SPOTIFY_CLIENT_ID", default="")
 SPOTIFY_CLIENT_SECRET = config("SPOTIFY_CLIENT_SECRET", default="")
 SPOTIFY_CALLBACK_URL = config(
-    "SPOTIFY_CLIENT_SECRET", default="http://localhost:5000/auth"
+    "SPOTIFY_CLIENT_SECRET", default="http://localhost:5000/auth/callback"
 )
 
 # Activate Django-Heroku.
