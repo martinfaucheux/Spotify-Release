@@ -29,8 +29,7 @@ class Album(TimeStampMixin):
         return self.name if self.name else f"Album {self.id}"
 
 
-class User(AbstractUser):
-    pass
+
 
 
 class SpotifyToken(TimeStampMixin):
@@ -55,3 +54,8 @@ class SpotifyToken(TimeStampMixin):
 
         else:
             raise Exception("Could not refresh the token")
+
+class User(AbstractUser):
+    spotify_token = models.OneToOneField(
+        "spotifyrelease.SpotifyToken", on_delete=models.CASCADE, related_name="user", null=True, blank=True
+    )
