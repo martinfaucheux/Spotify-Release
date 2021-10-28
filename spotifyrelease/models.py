@@ -1,6 +1,7 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.utils import timezone
+from utils.exceptions import InvalidSpotifyToken
 from utils.models import LowerEmailField, TimeStampMixin
 from utils.spotify_auth import SpotifyAuth
 
@@ -39,7 +40,7 @@ class SpotifyToken(TimeStampMixin):
     user = models.OneToOneField(
         "spotifyrelease.User",
         on_delete=models.CASCADE,
-        related_name="spotify_user",
+        related_name="spotify_token",
         null=True,
         blank=True,
     )
@@ -50,12 +51,16 @@ class SpotifyToken(TimeStampMixin):
 
     def refresh(self):
         auth_manager = SpotifyAuth()
-        token_data = auth_manager.refresh_auth(self.refresh_token)
 
-        save_kwargs = auth_manager.get_save_kwargs(token_data)
-        for field, value in save_kwargs.items():
-            setattr(self, field, value)
-        self.save()
+        try:
+            token_data = auth_manager.refresh_auth(self.refresh_token)
+            save_kwargs = auth_manager.get_save_kwargs(token_data)
+            for field, value in save_kwargs.items():
+                setattr(self, field, value)
+            self.save()
+        except InvalidSpotifyToken:
+            self.user.delete_tokens()
+            raise
 
 
 class User(AbstractUser):
