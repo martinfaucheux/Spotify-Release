@@ -1,3 +1,4 @@
+from django.contrib.auth import login as auth_login
 from django.http import HttpResponseRedirect
 from rest_framework import status
 from rest_framework.authtoken.models import Token
@@ -46,6 +47,7 @@ def spotify_auth_callback_view(request):
             SpotifyToken.objects.update_or_create(user=user, defaults=save_kwargs)
 
             auth_token, _ = Token.objects.get_or_create(user=user)
+            auth_login(request, user=user)
 
     return Response(status=status.HTTP_200_OK, data={"token": auth_token.key})
 
