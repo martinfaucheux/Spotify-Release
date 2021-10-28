@@ -52,14 +52,10 @@ class SpotifyToken(TimeStampMixin):
         auth_manager = SpotifyAuth()
         token_data = auth_manager.refresh_auth(self.refresh_token)
 
-        if token_data is not None:
-            save_kwargs = auth_manager.get_save_kwargs(token_data)
-            for field, value in save_kwargs.items():
-                setattr(self, field, value)
-            self.save()
-
-        else:
-            raise Exception("Could not refresh the token")
+        save_kwargs = auth_manager.get_save_kwargs(token_data)
+        for field, value in save_kwargs.items():
+            setattr(self, field, value)
+        self.save()
 
 
 class User(AbstractUser):
@@ -78,3 +74,9 @@ class User(AbstractUser):
     )  # changes email to unique and blank to false
 
     objects = UserManager()
+
+    def delete_tokens(self):
+        for attr_name in ["spotify_token", "auth_token"]:
+            token = getattr(self, attr_name, None)
+            if token is not None:
+                token.delete()

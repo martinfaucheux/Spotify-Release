@@ -5,12 +5,6 @@ import requests
 SPOTIFY_URL_BROWSE = "https://api.spotify.com/v1/browse/new-releases"
 
 
-# curl --request GET \
-#   --url https://api.spotify.com/v1/browse/new-releases \
-#   --header 'Authorization: ' \
-#   --header 'Content-Type: application/json'
-
-
 def fetch_new_release_data(access_token):
 
     album_list = []

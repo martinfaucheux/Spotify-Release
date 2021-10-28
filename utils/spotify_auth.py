@@ -6,6 +6,8 @@ import requests
 from config import settings
 from django.utils import timezone
 
+from utils.exceptions import InvalidToken
+
 SPOTIFY_URL_AUTH = "https://accounts.spotify.com/authorize/"
 SPOTIFY_URL_TOKEN = "https://accounts.spotify.com/api/token/"
 SPOTIFY_URL_USER_INFO = "https://api.spotify.com/v1/me/"
@@ -66,7 +68,7 @@ class SpotifyAuth(object):
         user_info = json.loads(request.text)
 
         if "error" in user_info:
-            raise Exception("Could not fetch user data")
+            raise InvalidToken("Could not fetch user data")
 
         return {"name": user_info["display_name"], "email": user_info["email"]}
 
@@ -99,7 +101,7 @@ class SpotifyAuth(object):
 
     def _handle_token(self, response):
         if "error" in response:
-            return None
+            raise InvalidToken("Could not fetch user token from Spotify")
 
         return {
             key: value
