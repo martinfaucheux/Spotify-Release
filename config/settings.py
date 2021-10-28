@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.2/ref/settings/
 """
 
+import os
 from pathlib import Path
 
 import django_heroku
@@ -45,6 +46,7 @@ INSTALLED_APPS = [
     "django_extensions",
     "django_filters",
     "rest_framework.authtoken",
+    "django_celery_beat",
     # my apps
     "spotifyrelease",
 ]
@@ -64,7 +66,7 @@ ROOT_URLCONF = "config.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [],
+        "DIRS": [os.path.join(BASE_DIR, "templates"), ],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -77,6 +79,8 @@ TEMPLATES = [
     },
 ]
 
+
+
 WSGI_APPLICATION = "config.wsgi.application"
 
 
@@ -85,7 +89,7 @@ WSGI_APPLICATION = "config.wsgi.application"
 
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.postgresql_psycopg2",
+        "ENGINE": "django.db.backends.postgresql",
         "NAME": config("DATABASE_NAME", default="spotifyrelease"),
         "USER": config("DATABASE_USER", default="postgres"),
         "PASSWORD": config("DATABASE_PASSWORD", default="postgres"),
@@ -129,9 +133,6 @@ STATIC_URL = "/static/"
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
-
-# enable using ipython with `manage.py shell_plus`
-SHELL_PLUS = "ipython"
 
 # override default user model
 # Custom User model
