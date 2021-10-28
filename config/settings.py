@@ -150,7 +150,7 @@ REST_FRAMEWORK = {
 }
 
 # CELERY related settings
-BROKER_URL = config("BROKER_URL", default="")
+BROKER_URL = config("REDIS_URL", default="")
 CELERY_BROKER_URL = BROKER_URL
 CELERY_RESULT_BACKEND = BROKER_URL
 CELERY_ACCEPT_CONTENT = ["application/json"]
