@@ -28,3 +28,9 @@ Spotify data is pulled periodically with a background job. It uses the first tok
 This code runs on Heroku: http://spotify-pull-release.herokuapp.com/auth/login
 
 New releases are pulled every day automatically.
+
+# Possible improvements
+
+* add tests
+* add state and store in the cache to make the OAuth process more secure
+* check the Spotify token of all users periodically and delete their auth token if an error happen
