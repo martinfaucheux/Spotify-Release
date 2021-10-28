@@ -1,6 +1,8 @@
 from django.http import HttpResponseRedirect
 from rest_framework import status
+from rest_framework.authtoken.models import Token
 from rest_framework.decorators import api_view
+from rest_framework.exceptions import PermissionDenied
 from rest_framework.filters import OrderingFilter, SearchFilter
 from rest_framework.generics import get_object_or_404
 from rest_framework.response import Response
@@ -9,7 +11,7 @@ from utils.pagination import CustomPagination
 from utils.spotify_auth import SpotifyAuth
 from utils.spotify_browser import fetch_new_release_data
 
-from spotifyrelease.models import Album, Artist, SpotifyToken
+from spotifyrelease.models import Album, Artist, SpotifyToken, User
 from spotifyrelease.serializers import AlbumSerializer, ArtistSerializer
 
 
@@ -19,26 +21,47 @@ def spotify_auth_callback_view(request):
 
     code = request.GET.get("code")
 
-    if code is not None:
+    if code is None:
+        raise PermissionDenied("No code was passed in the url")
+    else:
         auth_manager = SpotifyAuth()
         token_data = auth_manager.get_user_token(code)
 
-        if token_data is not None:
+        if token_data is None:
+            raise PermissionDenied("Could not retrieve token data")
+        else:
             save_kwargs = auth_manager.get_save_kwargs(token_data)
-            SpotifyToken.objects.create(**save_kwargs)
 
-    return Response(status=status.HTTP_200_OK, data={"status": "ok"})
+            access_token = save_kwargs["access_token"]
+            user_info = auth_manager.get_user_info(access_token)
+
+            user, _ = User.objects.get_or_create(
+                email=user_info["email"], defaults={"name": user_info["name"]}
+            )
+
+            existing_spotify_token = getattr(user, "spotify_token", None)
+            if existing_spotify_token is not None:
+                existing_spotify_token.delete()
+
+            SpotifyToken.objects.update_or_create(user=user, defaults=save_kwargs)
+
+            auth_token, _ = Token.objects.get_or_create(user=user)
+
+    return Response(status=status.HTTP_200_OK, data={"token": auth_token.key})
 
 
 @api_view(["GET"])
 def spotify_login_view(request):
     auth_manager = SpotifyAuth()
-    url = auth_manager.get_user()
+    url = auth_manager.get_oauth_url()
     return HttpResponseRedirect(redirect_to=url)
 
 
 @api_view(["GET"])
 def display_new_releases(request):
+    """
+    Test view to fetch raw data from Spotify
+    """
     spotify_token = SpotifyToken.objects.order_by("-updated_at").first()
 
     if not spotify_token.is_valid:

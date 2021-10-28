@@ -1,10 +1,11 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.utils import timezone
-from utils.model_mixins import TimeStampMixin
+from utils.models import LowerEmailField, TimeStampMixin
 from utils.spotify_auth import SpotifyAuth
 
 from .constants import AlbumType
+from .managers import UserManager
 
 
 class Artist(TimeStampMixin):
@@ -29,14 +30,19 @@ class Album(TimeStampMixin):
         return self.name if self.name else f"Album {self.id}"
 
 
-
-
-
 class SpotifyToken(TimeStampMixin):
 
     access_token = models.CharField(blank=True, max_length=255)
     refresh_token = models.CharField(blank=True, max_length=255)
     expire_at = models.DateTimeField()
+
+    user = models.OneToOneField(
+        "spotifyrelease.User",
+        on_delete=models.CASCADE,
+        related_name="spotify_user",
+        null=True,
+        blank=True,
+    )
 
     @property
     def is_valid(self):
@@ -55,7 +61,20 @@ class SpotifyToken(TimeStampMixin):
         else:
             raise Exception("Could not refresh the token")
 
+
 class User(AbstractUser):
-    spotify_token = models.OneToOneField(
-        "spotifyrelease.SpotifyToken", on_delete=models.CASCADE, related_name="user", null=True, blank=True
-    )
+    # Delete unused fields
+    username = None
+    first_name = None
+    last_name = None
+
+    # Use email as username
+    USERNAME_FIELD = "email"
+    REQUIRED_FIELDS = []  # removes email from REQUIRED_FIELDS
+
+    name = models.CharField(max_length=255, null=True, blank=True)
+    email = LowerEmailField(
+        unique=True, db_index=True, help_text="Email of the user"
+    )  # changes email to unique and blank to false
+
+    objects = UserManager()

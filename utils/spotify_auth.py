@@ -8,8 +8,10 @@ from django.utils import timezone
 
 SPOTIFY_URL_AUTH = "https://accounts.spotify.com/authorize/"
 SPOTIFY_URL_TOKEN = "https://accounts.spotify.com/api/token/"
+SPOTIFY_URL_USER_INFO = "https://api.spotify.com/v1/me/"
+
 RESPONSE_TYPE = "code"
-HEADER = "application/x-www-form-urlencoded"
+CONTENT_TYPE = "application/x-www-form-urlencoded"
 SCOPE = "user-read-email user-read-private"
 
 
@@ -26,14 +28,14 @@ class SpotifyAuth(object):
             "client_id": self.CLIENT_ID,
             "client_secret": self.CLIENT_SECRET,
         }
-        headers = {"Content-Type": HEADER}
+        headers = {"Content-Type": CONTENT_TYPE}
 
         post_refresh = requests.post(SPOTIFY_URL_TOKEN, data=body, headers=headers)
         p_back = json.loads(post_refresh.text)
 
         return self._handle_token(p_back)
 
-    def get_user(self):
+    def get_oauth_url(self):
         return self._get_auth(
             self.CLIENT_ID,
             self.CALLBACK_URL,
@@ -55,6 +57,19 @@ class SpotifyAuth(object):
         kwargs["expire_at"] = timezone.now() + timedelta(seconds=expires_in)
         return kwargs
 
+    def get_user_info(self, access_token):
+        headers = {
+            "Authorization": f"Bearer {access_token}",
+            "Content-Type": "application/json",
+        }
+        request = requests.get(SPOTIFY_URL_USER_INFO, headers=headers)
+        user_info = json.loads(request.text)
+
+        if "error" in user_info:
+            raise Exception("Could not fetch user data")
+
+        return {"name": user_info["display_name"], "email": user_info["email"]}
+
     def _get_auth(self, client_id, redirect_uri, scope):
         return (
             f"{SPOTIFY_URL_AUTH}"
@@ -75,7 +90,7 @@ class SpotifyAuth(object):
 
         encoded = base64.b64encode(f"{client_id}:{client_secret}".encode()).decode()
         headers = {
-            "Content-Type": HEADER,
+            "Content-Type": CONTENT_TYPE,
             "Authorization": f"Basic {encoded}",
         }
 
