@@ -1,6 +1,36 @@
 # Spotify-Release
 Django API which pull Spotify new release data
 
+# Getting started
+
+To use this package, you need Python 3.X and pipenv.
+You also need to set up a postgres database.
+You can set the environment variables based on your setup (e.g. database name and user, spotify api credentials)
+```bash
+cp .env.example .env
+```
+
+Install python packages and activate environment
+```bash
+pipenv install
+pipenv shell
+```
+
+Initialize the database
+```bash
+./manage.py migrate
+```
+
+Create a user for the admin panel (Optional)
+```
+./manage.py createsuperuser
+```
+
+For running the app:
+```bash
+./manage.py runserver 5000
+```
+
 # Usage
 
 ## Sign in / Sign up
