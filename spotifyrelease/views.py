@@ -2,15 +2,15 @@ from django.contrib.auth import login as auth_login
 from django.http import HttpResponseRedirect
 from rest_framework import status
 from rest_framework.authtoken.models import Token
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes
 from rest_framework.exceptions import PermissionDenied
 from rest_framework.filters import OrderingFilter, SearchFilter
 from rest_framework.generics import get_object_or_404
+from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.viewsets import ReadOnlyModelViewSet
 from utils.pagination import CustomPagination
 from utils.spotify_auth import SpotifyAuth
-from utils.spotify_browser import fetch_new_release_data
 
 from spotifyrelease.models import Album, Artist, SpotifyToken, User
 from spotifyrelease.serializers import AlbumSerializer, ArtistSerializer
@@ -18,6 +18,7 @@ from spotifyrelease.serializers import AlbumSerializer, ArtistSerializer
 
 # Create your views here.
 @api_view(["GET"])
+@permission_classes([AllowAny])
 def spotify_auth_callback_view(request):
 
     code = request.GET.get("code")
@@ -53,26 +54,11 @@ def spotify_auth_callback_view(request):
 
 
 @api_view(["GET"])
+@permission_classes([AllowAny])
 def spotify_login_view(request):
     auth_manager = SpotifyAuth()
     url = auth_manager.get_oauth_url()
     return HttpResponseRedirect(redirect_to=url)
-
-
-@api_view(["GET"])
-def display_new_releases(request):
-    """
-    Test view to fetch raw data from Spotify
-    """
-    spotify_token = SpotifyToken.objects.order_by("-updated_at").first()
-
-    if not spotify_token.is_valid:
-        spotify_token.refresh()
-
-    return Response(
-        status=status.HTTP_202_ACCEPTED,
-        data=fetch_new_release_data(spotify_token.access_token),
-    )
 
 
 class ArtistViewSet(ReadOnlyModelViewSet):

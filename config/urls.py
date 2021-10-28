@@ -21,7 +21,6 @@ from spotifyrelease.views import (
     AlbumViewSet,
     ArtistOfAlbumViewSet,
     ArtistViewSet,
-    display_new_releases,
     spotify_auth_callback_view,
     spotify_login_view,
 )
@@ -42,8 +41,7 @@ urlpatterns = [
     path("admin/", admin.site.urls),
     path("api-auth/", include("rest_framework.urls")),
     path("auth/callback/", spotify_auth_callback_view),
-    path("auth/spotify-login/", spotify_login_view),
-    path("new-releases", display_new_releases),
+    path("auth/login/", spotify_login_view),
     path("api/", include(router.urls)),
     path("api/", include(artist_router.urls)),
     path("api/", include(album_router.urls)),
